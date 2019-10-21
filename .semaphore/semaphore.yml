@@ -32,6 +32,9 @@ blocks:
             - bundle exec brakeman
   - name: Unit tests
     task:
+      env_vars:
+        - name: ISSUE_TRACKER_API_DATABASE_USERNAME
+          value: postgres
       prologue:
         commands:
           - checkout
