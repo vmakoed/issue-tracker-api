@@ -1,0 +1,8 @@
+Style/Documentation:
+  Enabled: false
+
+AllCops:
+  Exclude:
+    - 'db/**/*'
+    - 'config/**/*'
+    - 'bin/{bundle,setup,rails,rake,spring}'
