@@ -1,0 +1,32 @@
+version: v1.0
+name: First pipeline
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Setup
+    task:
+      prologue:
+        commands:
+          - checkout
+      jobs:
+        - name: bundle
+          commands:
+            - cache restore
+            - sem-version ruby 2.6.5
+            - bundle install --deployment --path vendor/bundle
+            - cache store
+  - name: Code scanning
+    task:
+      prologue:
+        commands:
+          - checkout
+      jobs:
+        - name: check style + security
+          commands:
+            - cache restore
+            - sem-version ruby 2.6.5
+            - bundle install --deployment --path vendor/bundle
+            - bundle exec rubocop
+            - bundle exec brakeman
