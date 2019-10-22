@@ -63,10 +63,6 @@ RSpec.describe 'Issues', type: :request do
         expect(response).to have_http_status(:created)
       end
 
-      it 'returns response in json format' do
-        expect(response.content_type).to eq('application/json; charset=utf-8')
-      end
-
       context 'when issue params does not contain status' do
         let(:humanized_status) do
           Issues::StatusEnum.t(Issues::StatusEnum::PENDING)
@@ -94,10 +90,6 @@ RSpec.describe 'Issues', type: :request do
 
       it 'returns a failure response' do
         expect(response).to have_http_status(:unprocessable_entity)
-      end
-
-      it 'returns response in json format' do
-        expect(response.content_type).to eq('application/json; charset=utf-8')
       end
     end
   end
@@ -139,10 +131,6 @@ RSpec.describe 'Issues', type: :request do
       it 'returns a success response' do
         expect(response).to have_http_status(:success)
       end
-
-      it 'returns response in json format' do
-        expect(response.content_type).to eq('application/json; charset=utf-8')
-      end
     end
 
     context 'with invalid attributes' do
@@ -150,10 +138,6 @@ RSpec.describe 'Issues', type: :request do
 
       it 'returns a failure response' do
         expect(response).to have_http_status(:unprocessable_entity)
-      end
-
-      it 'returns response in json format' do
-        expect(response.content_type).to eq('application/json; charset=utf-8')
       end
     end
   end
