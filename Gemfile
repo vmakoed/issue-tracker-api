@@ -12,8 +12,11 @@ gem 'puma', '~> 3.11'
 
 gem 'bootsnap', '>= 1.4.2', require: false
 
+gem 'enumerate_it', '~> 3.0'
+gem 'fast_jsonapi', '~> 1.5'
+
 group :development, :test do
-  gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'pry', '~> 0.12.2'
   gem 'rspec-rails', '~> 3.9'
   gem 'rubocop', '~> 0.75.1'
 end
@@ -28,5 +31,3 @@ end
 group :test do
   gem 'shoulda-matchers', '~> 4.1', '>= 4.1.2'
 end
-
-gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
