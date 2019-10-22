@@ -1,13 +1,16 @@
-inherit_mode:
-  merge:
-    - Exclude
-
 Style/Documentation:
   Enabled: false
+
+Metrics/BlockLength:
+  ExcludedMethods: ['describe', 'context']
 
 AllCops:
   TargetRubyVersion: 2.6
   Exclude:
-    - 'db/**/*'
+    - 'db/schema.rb'
     - 'config/**/*'
     - 'bin/{bundle,setup,rails,rake,spring}'
+
+inherit_mode:
+  merge:
+    - Exclude
