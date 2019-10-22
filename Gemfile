@@ -12,13 +12,16 @@ gem 'puma', '~> 3.11'
 
 gem 'bootsnap', '>= 1.4.2', require: false
 
+gem 'bcrypt', '~> 3.1.7'
 gem 'enumerate_it', '~> 3.0'
 gem 'fast_jsonapi', '~> 1.5'
+gem 'jwt', '~> 2.2', '>= 2.2.1'
 
 group :development, :test do
   gem 'pry', '~> 0.12.2'
   gem 'rspec-rails', '~> 3.9'
-  gem 'rubocop', '~> 0.75.1'
+  gem 'rubocop', '~> 0.75.1', require: false
+  gem 'rubocop-rspec', '~> 1.36', require: false
 end
 
 group :development do
