@@ -1,26 +1,27 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/logged_in_context'
 
 RSpec.describe 'Issues', type: :request do
-  let(:valid_attributes) do
+  let(:new_issue_attributes) do
     {
       title: 'New issue',
       description: 'Issue description'
     }
   end
 
-  let(:invalid_attributes) do
-    {
-      title: ''
-    }
+  shared_context 'when an issue exists' do
+    let!(:issue) { Issue.create(new_issue_attributes) }
   end
 
   describe 'GET /issues', response_format: :json do
-    let!(:issue) { Issue.create(valid_attributes) }
+    include_context 'when user is logged in'
+    include_context 'when an issue exists'
+
     let(:issues_json) { IssueSerializer.new(Issue.all).serialized_json }
 
-    before { get api_v1_issues_path }
+    before { get api_v1_issues_path, headers: authorization_headers }
 
     it 'returns all issues in response' do
       expect(response.body).to eq issues_json
@@ -32,10 +33,12 @@ RSpec.describe 'Issues', type: :request do
   end
 
   describe 'GET /issues/:id', response_format: :json do
-    let!(:issue) { Issue.create(valid_attributes) }
+    include_context 'when user is logged in'
+    include_context 'when an issue exists'
+
     let(:issue_json) { IssueSerializer.new(issue).serialized_json }
 
-    before { get api_v1_issue_path(issue) }
+    before { get api_v1_issue_path(issue), headers: authorization_headers }
 
     it 'returns an issue in response' do
       expect(response.body).to eq issue_json
@@ -46,122 +49,151 @@ RSpec.describe 'Issues', type: :request do
     end
   end
 
-  describe 'POST /issues', response_format: :json do
-    before { post api_v1_issues_path, params: { issue: attributes } }
-
-    context 'with valid attributes' do
-      let(:attributes) { valid_attributes }
-      let(:issue_attributes) { JSON.parse(response.body)['data']['attributes'] }
-
-      it 'returns a created issue in response' do
-        expect(issue_attributes['title']).to eq valid_attributes[:title]
-        expect(issue_attributes['description'])
-          .to eq valid_attributes[:description]
-      end
-
-      it 'returns a success response' do
-        expect(response).to have_http_status(:created)
-      end
-
-      it 'returns response in json format' do
-        expect(response.content_type).to eq('application/json; charset=utf-8')
-      end
-
-      context 'when issue params does not contain status' do
-        let(:humanized_status) do
-          Issues::StatusEnum.t(Issues::StatusEnum::PENDING)
-        end
-
-        it 'creates an issue with a default pending status' do
-          expect(issue_attributes['status']).to eq humanized_status
-        end
-      end
-
-      context 'when issue params contain status' do
-        let(:status) { Issues::StatusEnum::IN_PROGRESS }
-        let(:translated_status) { Issues::StatusEnum.t(status) }
-
-        let(:attributes) { valid_attributes.merge(status: status) }
-
-        it 'creates an issue with a correct status' do
-          expect(issue_attributes['status']).to eq translated_status
-        end
-      end
-    end
-
-    context 'with invalid attributes' do
-      let(:attributes) { invalid_attributes }
-
-      it 'returns a failure response' do
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-
-      it 'returns response in json format' do
-        expect(response.content_type).to eq('application/json; charset=utf-8')
-      end
+  shared_context 'when performing POST /issues request' do
+    before do
+      post api_v1_issues_path, params: { issue: attributes },
+                               headers: authorization_headers
     end
   end
 
-  describe 'PATCH/PUT /issues/:id', response_format: :json do
-    let!(:issue) { Issue.create(valid_attributes) }
-    let(:status) { Issues::StatusEnum::IN_PROGRESS }
+  shared_context 'when create attributes are valid' do
+    let(:attributes) { new_issue_attributes }
+  end
 
-    let(:update_attributes) do
+  describe 'POST /issues with valid attributes without status attribute',
+           response_format: :json do
+    include_context 'when user is logged in'
+    include_context 'when performing POST /issues request'
+    include_context 'when create attributes are valid'
+
+    let(:issue_id) { JSON.parse(response.body)['data']['id'] }
+    let(:created_issue) { Issue.find(issue_id) }
+    let(:issue_attributes) { JSON.parse(response.body)['data']['attributes'] }
+    let(:status) { Issues::StatusEnum::PENDING }
+    let(:translated_status) { Issues::StatusEnum.t(status) }
+
+    it 'stores a created issue' do
+      expect(created_issue).to be_present
+    end
+
+    it 'returns a created issue in response' do
+      expect(issue_attributes.values_at('title', 'description'))
+        .to eq attributes.values_at(:title, :description)
+    end
+
+    it 'returns a success response' do
+      expect(response).to have_http_status(:created)
+    end
+
+    it 'creates an issue with a default pending status' do
+      expect(issue_attributes['status']).to eq translated_status
+    end
+  end
+
+  shared_context 'when issue params contain status' do
+    let(:attributes) { new_issue_attributes.merge(status: status) }
+  end
+
+  describe 'POST /issues with valid attributes with status attribute',
+           response_format: :json do
+    include_context 'when user is logged in'
+    include_context 'when performing POST /issues request'
+    include_context 'when create attributes are valid'
+    include_context 'when issue params contain status'
+
+    let(:issue_attributes) { JSON.parse(response.body)['data']['attributes'] }
+    let(:status) { Issues::StatusEnum::IN_PROGRESS }
+    let(:translated_status) { Issues::StatusEnum.t(status) }
+
+    it 'creates an issue with a correct status' do
+      expect(issue_attributes['status']).to eq translated_status
+    end
+  end
+
+  shared_context 'when attributes are invalid' do
+    let(:attributes) do
+      {
+        title: ''
+      }
+    end
+  end
+
+  describe 'POST /issues with invalid attributes', response_format: :json do
+    include_context 'when user is logged in'
+    include_context 'when performing POST /issues request'
+    include_context 'when attributes are invalid'
+
+    it 'returns a failure response' do
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+  end
+
+  shared_context 'when performing PATCH/PUT /issues/:id request' do
+    before do
+      put api_v1_issue_path(issue), params: { issue: attributes },
+                                    headers: authorization_headers
+    end
+  end
+
+  shared_context 'when update attributes are valid' do
+    let(:status) { Issues::StatusEnum::IN_PROGRESS }
+    let(:attributes) do
       {
         title: 'Updated issue',
         description: 'Updated description',
         status: status
       }
     end
+  end
 
+  describe 'PATCH/PUT /issues/:id with valid attributes',
+           response_format: :json do
+    include_context 'when user is logged in'
+    include_context 'when an issue exists'
+    include_context 'when performing PATCH/PUT /issues/:id request'
+    include_context 'when update attributes are valid'
+
+    let(:issue_attributes) { JSON.parse(response.body)['data']['attributes'] }
     let(:translated_status) { Issues::StatusEnum.t(status) }
 
-    before { put api_v1_issue_path(issue), params: { issue: attributes } }
-
-    context 'with valid attributes' do
-      let(:attributes) { update_attributes }
-      let(:issue_attributes) { JSON.parse(response.body)['data']['attributes'] }
-
-      it 'returns an updated issue in response' do
-        expect(issue_attributes['title']).to eq update_attributes[:title]
-        expect(issue_attributes['description'])
-          .to eq update_attributes[:description]
-        expect(issue_attributes['status']).to eq translated_status
-      end
-
-      it 'updates the issue' do
-        issue.reload
-
-        expect(issue.title).to eq update_attributes[:title]
-        expect(issue.description).to eq update_attributes[:description]
-      end
-
-      it 'returns a success response' do
-        expect(response).to have_http_status(:success)
-      end
-
-      it 'returns response in json format' do
-        expect(response.content_type).to eq('application/json; charset=utf-8')
-      end
+    it 'returns an updated issue in response' do
+      expect(issue_attributes.values_at('title', 'description'))
+        .to eq attributes.values_at(:title, :description)
     end
 
-    context 'with invalid attributes' do
-      let(:attributes) { invalid_attributes }
+    it 'returns an issue with an updated status' do
+      expect(issue_attributes['status']).to eq translated_status
+    end
 
-      it 'returns a failure response' do
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
+    it 'updates the issue' do
+      issue.reload
 
-      it 'returns response in json format' do
-        expect(response.content_type).to eq('application/json; charset=utf-8')
-      end
+      expect(issue.attributes.values_at('title', 'description'))
+        .to eq attributes.values_at(:title, :description)
+    end
+
+    it 'returns a success response' do
+      expect(response).to have_http_status(:success)
+    end
+  end
+
+  describe 'PATCH/PUT /issues/:id with invalid attributes',
+           response_format: :json do
+    include_context 'when user is logged in'
+    include_context 'when an issue exists'
+    include_context 'when performing PATCH/PUT /issues/:id request'
+    include_context 'when attributes are invalid'
+
+    it 'returns a failure response' do
+      expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 
   describe 'DELETE /issues/:id' do
-    let!(:issue) { Issue.create(valid_attributes) }
+    include_context 'when user is logged in'
+    include_context 'when an issue exists'
 
-    before { delete api_v1_issue_path(issue) }
+    before { delete api_v1_issue_path(issue), headers: authorization_headers }
 
     it 'returns an empty response' do
       expect(response.body).to be_empty
