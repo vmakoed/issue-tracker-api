@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'support/logged_in_context'
 
 RSpec.describe 'Issues', type: :request do
   let(:new_issue_attributes) do
@@ -15,11 +16,12 @@ RSpec.describe 'Issues', type: :request do
   end
 
   describe 'GET /issues', response_format: :json do
+    include_context 'when user is logged in'
     include_context 'when an issue exists'
 
     let(:issues_json) { IssueSerializer.new(Issue.all).serialized_json }
 
-    before { get api_v1_issues_path }
+    before { get api_v1_issues_path, headers: authorization_headers }
 
     it 'returns all issues in response' do
       expect(response.body).to eq issues_json
@@ -31,11 +33,12 @@ RSpec.describe 'Issues', type: :request do
   end
 
   describe 'GET /issues/:id', response_format: :json do
+    include_context 'when user is logged in'
     include_context 'when an issue exists'
 
     let(:issue_json) { IssueSerializer.new(issue).serialized_json }
 
-    before { get api_v1_issue_path(issue) }
+    before { get api_v1_issue_path(issue), headers: authorization_headers }
 
     it 'returns an issue in response' do
       expect(response.body).to eq issue_json
@@ -47,7 +50,10 @@ RSpec.describe 'Issues', type: :request do
   end
 
   shared_context 'when performing POST /issues request' do
-    before { post api_v1_issues_path, params: { issue: attributes } }
+    before do
+      post api_v1_issues_path, params: { issue: attributes },
+                               headers: authorization_headers
+    end
   end
 
   shared_context 'when create attributes are valid' do
@@ -56,6 +62,7 @@ RSpec.describe 'Issues', type: :request do
 
   describe 'POST /issues with valid attributes without status attribute',
            response_format: :json do
+    include_context 'when user is logged in'
     include_context 'when performing POST /issues request'
     include_context 'when create attributes are valid'
 
@@ -89,6 +96,7 @@ RSpec.describe 'Issues', type: :request do
 
   describe 'POST /issues with valid attributes with status attribute',
            response_format: :json do
+    include_context 'when user is logged in'
     include_context 'when performing POST /issues request'
     include_context 'when create attributes are valid'
     include_context 'when issue params contain status'
@@ -111,6 +119,7 @@ RSpec.describe 'Issues', type: :request do
   end
 
   describe 'POST /issues with invalid attributes', response_format: :json do
+    include_context 'when user is logged in'
     include_context 'when performing POST /issues request'
     include_context 'when attributes are invalid'
 
@@ -120,7 +129,10 @@ RSpec.describe 'Issues', type: :request do
   end
 
   shared_context 'when performing PATCH/PUT /issues/:id request' do
-    before { put api_v1_issue_path(issue), params: { issue: attributes } }
+    before do
+      put api_v1_issue_path(issue), params: { issue: attributes },
+                                    headers: authorization_headers
+    end
   end
 
   shared_context 'when update attributes are valid' do
@@ -136,6 +148,7 @@ RSpec.describe 'Issues', type: :request do
 
   describe 'PATCH/PUT /issues/:id with valid attributes',
            response_format: :json do
+    include_context 'when user is logged in'
     include_context 'when an issue exists'
     include_context 'when performing PATCH/PUT /issues/:id request'
     include_context 'when update attributes are valid'
@@ -166,6 +179,7 @@ RSpec.describe 'Issues', type: :request do
 
   describe 'PATCH/PUT /issues/:id with invalid attributes',
            response_format: :json do
+    include_context 'when user is logged in'
     include_context 'when an issue exists'
     include_context 'when performing PATCH/PUT /issues/:id request'
     include_context 'when attributes are invalid'
@@ -176,9 +190,10 @@ RSpec.describe 'Issues', type: :request do
   end
 
   describe 'DELETE /issues/:id' do
+    include_context 'when user is logged in'
     include_context 'when an issue exists'
 
-    before { delete api_v1_issue_path(issue) }
+    before { delete api_v1_issue_path(issue), headers: authorization_headers }
 
     it 'returns an empty response' do
       expect(response.body).to be_empty

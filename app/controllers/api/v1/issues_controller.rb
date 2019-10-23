@@ -3,6 +3,7 @@
 module Api
   module V1
     class IssuesController < Api::V1::ApiController
+      before_action :authenticate_user
       before_action :set_issue, only: %i[show update destroy]
 
       # GET /issues

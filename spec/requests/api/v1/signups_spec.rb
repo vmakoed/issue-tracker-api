@@ -24,7 +24,7 @@ RSpec.describe 'Signups', type: :request do
     end
   end
 
-  describe 'POST /signups with valid attributes', response_format: :json do
+  describe 'POST /signup with valid attributes', response_format: :json do
     include_context 'when performing POST /signup request'
     include_context 'when signup attributes are valid'
 
@@ -49,7 +49,7 @@ RSpec.describe 'Signups', type: :request do
     end
   end
 
-  describe 'POST /signups with invalid attributes', response_format: :json do
+  describe 'POST /signup with invalid attributes', response_format: :json do
     include_context 'when performing POST /signup request'
     include_context 'when signup attributes are invalid'
 

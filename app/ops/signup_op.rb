@@ -18,8 +18,6 @@ class SignupOp < ::Subroutine::Op
   end
 
   def create_user
-    @user = User.new(email: email)
-    @user.password = password
-    @user.save!
+    @user = User.create!(email: email, password: password)
   end
 end
