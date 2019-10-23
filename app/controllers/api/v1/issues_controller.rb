@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    class IssuesController < ApplicationController
+    class IssuesController < Api::V1::ApiController
       before_action :set_issue, only: %i[show update destroy]
 
       # GET /issues

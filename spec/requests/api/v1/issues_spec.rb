@@ -59,9 +59,15 @@ RSpec.describe 'Issues', type: :request do
     include_context 'when performing POST /issues request'
     include_context 'when create attributes are valid'
 
+    let(:issue_id) { JSON.parse(response.body)['data']['id'] }
+    let(:created_issue) { Issue.find(issue_id) }
     let(:issue_attributes) { JSON.parse(response.body)['data']['attributes'] }
     let(:status) { Issues::StatusEnum::PENDING }
     let(:translated_status) { Issues::StatusEnum.t(status) }
+
+    it 'stores a created issue' do
+      expect(created_issue).to be_present
+    end
 
     it 'returns a created issue in response' do
       expect(issue_attributes.values_at('title', 'description'))
