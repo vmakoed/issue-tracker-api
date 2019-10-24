@@ -44,7 +44,7 @@ RSpec.describe 'Logins', type: :request do
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
-    it 'returns error' do
+    it 'returns error in the response' do
       expect(JSON.parse(response.body)['error']).not_to be_empty
     end
   end

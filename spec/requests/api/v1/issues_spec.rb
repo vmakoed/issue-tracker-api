@@ -4,19 +4,18 @@ require 'rails_helper'
 require 'support/logged_in_context'
 
 RSpec.describe 'Issues', type: :request do
-  let(:new_issue_attributes) do
-    {
-      title: 'New issue',
-      description: 'Issue description'
-    }
+  shared_context 'when an issue exists' do
+    let!(:issue) { create(:issue) }
   end
 
-  shared_context 'when an issue exists' do
-    let!(:issue) { Issue.create(new_issue_attributes) }
+  shared_context 'when issue author is logged in' do
+    include_context 'when logged in' do
+      let(:user) { issue.author }
+    end
   end
 
   describe 'GET /issues', response_format: :json do
-    include_context 'when user is logged in'
+    include_context 'when author is logged in'
     include_context 'when an issue exists'
 
     let(:issues_json) { IssueSerializer.new(Issue.all).serialized_json }
@@ -33,7 +32,7 @@ RSpec.describe 'Issues', type: :request do
   end
 
   describe 'GET /issues/:id', response_format: :json do
-    include_context 'when user is logged in'
+    include_context 'when author is logged in'
     include_context 'when an issue exists'
 
     let(:issue_json) { IssueSerializer.new(issue).serialized_json }
@@ -57,12 +56,17 @@ RSpec.describe 'Issues', type: :request do
   end
 
   shared_context 'when create attributes are valid' do
-    let(:attributes) { new_issue_attributes }
+    let(:attributes) do
+      {
+        title: 'New issue',
+        description: 'Issue description'
+      }
+    end
   end
 
   describe 'POST /issues with valid attributes without status attribute',
            response_format: :json do
-    include_context 'when user is logged in'
+    include_context 'when author is logged in'
     include_context 'when performing POST /issues request'
     include_context 'when create attributes are valid'
 
@@ -90,20 +94,28 @@ RSpec.describe 'Issues', type: :request do
     end
   end
 
-  shared_context 'when issue params contain status' do
-    let(:attributes) { new_issue_attributes.merge(status: status) }
+  shared_context 'when issue params contain status' do |status|
+    let(:attributes) do
+      {
+        title: 'New issue',
+        description: 'Issue description',
+        status: status
+      }
+    end
   end
 
   describe 'POST /issues with valid attributes with status attribute',
            response_format: :json do
-    include_context 'when user is logged in'
+    include_context 'when author is logged in'
     include_context 'when performing POST /issues request'
     include_context 'when create attributes are valid'
-    include_context 'when issue params contain status'
 
-    let(:issue_attributes) { JSON.parse(response.body)['data']['attributes'] }
     let(:status) { Issues::StatusEnum::IN_PROGRESS }
     let(:translated_status) { Issues::StatusEnum.t(status) }
+    let(:issue_attributes) { JSON.parse(response.body)['data']['attributes'] }
+
+    include_context 'when issue params contain status',
+                    Issues::StatusEnum::IN_PROGRESS
 
     it 'creates an issue with a correct status' do
       expect(issue_attributes['status']).to eq translated_status
@@ -119,7 +131,7 @@ RSpec.describe 'Issues', type: :request do
   end
 
   describe 'POST /issues with invalid attributes', response_format: :json do
-    include_context 'when user is logged in'
+    include_context 'when author is logged in'
     include_context 'when performing POST /issues request'
     include_context 'when attributes are invalid'
 
@@ -132,6 +144,22 @@ RSpec.describe 'Issues', type: :request do
     before do
       put api_v1_issue_path(issue), params: { issue: attributes },
                                     headers: authorization_headers
+    end
+  end
+
+  describe 'POST /issues
+            by manager
+            with valid attributes' do
+    include_context 'when manager is logged in'
+    include_context 'when performing POST /issues request'
+    include_context 'when create attributes are valid'
+
+    it 'returns a failure response' do
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'returns error in the response' do
+      expect(JSON.parse(response.body)['error']).not_to be_empty
     end
   end
 
@@ -148,8 +176,8 @@ RSpec.describe 'Issues', type: :request do
 
   describe 'PATCH/PUT /issues/:id with valid attributes',
            response_format: :json do
-    include_context 'when user is logged in'
     include_context 'when an issue exists'
+    include_context 'when issue author is logged in'
     include_context 'when performing PATCH/PUT /issues/:id request'
     include_context 'when update attributes are valid'
 
@@ -179,8 +207,8 @@ RSpec.describe 'Issues', type: :request do
 
   describe 'PATCH/PUT /issues/:id with invalid attributes',
            response_format: :json do
-    include_context 'when user is logged in'
     include_context 'when an issue exists'
+    include_context 'when issue author is logged in'
     include_context 'when performing PATCH/PUT /issues/:id request'
     include_context 'when attributes are invalid'
 
@@ -190,7 +218,7 @@ RSpec.describe 'Issues', type: :request do
   end
 
   describe 'DELETE /issues/:id' do
-    include_context 'when user is logged in'
+    include_context 'when author is logged in'
     include_context 'when an issue exists'
 
     before { delete api_v1_issue_path(issue), headers: authorization_headers }

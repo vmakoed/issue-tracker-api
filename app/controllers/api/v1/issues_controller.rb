@@ -20,7 +20,9 @@ module Api
 
       # POST /issues
       def create
-        @issue = Issue.new(issue_params)
+        @issue = Issues::CreateOp.submit!(
+          current_user, issue_params.to_h
+        ).issue
 
         if @issue.save
           render json: issue_json,
@@ -33,6 +35,8 @@ module Api
 
       # PATCH/PUT /issues/1
       def update
+        authorize @issue
+
         if @issue.update(issue_params)
           render json: issue_json
         else

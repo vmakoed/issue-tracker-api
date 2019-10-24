@@ -16,9 +16,11 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'enumerate_it', '~> 3.0'
 gem 'fast_jsonapi', '~> 1.5'
 gem 'jwt', '~> 2.2', '>= 2.2.1'
+gem 'pundit', '~> 2.1'
 gem 'subroutine', '~> 0.8.1'
 
 group :development, :test do
+  gem 'factory_bot_rails', '~> 5.1', '>= 5.1.1'
   gem 'pry', '~> 0.12.2'
   gem 'rspec-rails', '~> 3.9'
   gem 'rubocop', '~> 0.75.1', require: false
