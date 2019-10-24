@@ -1,57 +1,13 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'support/logged_in_context'
+require 'support/issues/shared_contexts'
 
 RSpec.describe 'Issues', type: :request do
-  shared_context 'when an issue exists' do
-    let!(:issue) { create(:issue) }
-  end
-
-  shared_context 'when issue author is logged in' do
-    include_context 'when logged in' do
-      let(:user) { issue.author }
-    end
-  end
-
-  describe 'GET /issues', response_format: :json do
-    include_context 'when author is logged in'
-    include_context 'when an issue exists'
-
-    let(:issues_json) { IssueSerializer.new(Issue.all).serialized_json }
-
-    before { get api_v1_issues_path, headers: authorization_headers }
-
-    it 'returns all issues in response' do
-      expect(response.body).to eq issues_json
-    end
-
-    it 'returns a success response' do
-      expect(response).to have_http_status(:success)
-    end
-  end
-
-  describe 'GET /issues/:id', response_format: :json do
-    include_context 'when author is logged in'
-    include_context 'when an issue exists'
-
-    let(:issue_json) { IssueSerializer.new(issue).serialized_json }
-
-    before { get api_v1_issue_path(issue), headers: authorization_headers }
-
-    it 'returns an issue in response' do
-      expect(response.body).to eq issue_json
-    end
-
-    it 'returns a success response' do
-      expect(response).to have_http_status(:success)
-    end
-  end
-
   shared_context 'when performing POST /issues request' do
     before do
       post api_v1_issues_path, params: { issue: attributes },
-                               headers: authorization_headers
+           headers: authorization_headers
     end
   end
 
@@ -122,14 +78,6 @@ RSpec.describe 'Issues', type: :request do
     end
   end
 
-  shared_context 'when attributes are invalid' do
-    let(:attributes) do
-      {
-        title: ''
-      }
-    end
-  end
-
   describe 'POST /issues with invalid attributes', response_format: :json do
     include_context 'when author is logged in'
     include_context 'when performing POST /issues request'
@@ -143,7 +91,7 @@ RSpec.describe 'Issues', type: :request do
   shared_context 'when performing PATCH/PUT /issues/:id request' do
     before do
       put api_v1_issue_path(issue), params: { issue: attributes },
-                                    headers: authorization_headers
+          headers: authorization_headers
     end
   end
 
@@ -171,64 +119,6 @@ RSpec.describe 'Issues', type: :request do
         description: 'Updated description',
         status: status
       }
-    end
-  end
-
-  describe 'PATCH/PUT /issues/:id with valid attributes',
-           response_format: :json do
-    include_context 'when an issue exists'
-    include_context 'when issue author is logged in'
-    include_context 'when performing PATCH/PUT /issues/:id request'
-    include_context 'when update attributes are valid'
-
-    let(:issue_attributes) { JSON.parse(response.body)['data']['attributes'] }
-    let(:translated_status) { Issues::StatusEnum.t(status) }
-
-    it 'returns an updated issue in response' do
-      expect(issue_attributes.values_at('title', 'description'))
-        .to eq attributes.values_at(:title, :description)
-    end
-
-    it 'returns an issue with an updated status' do
-      expect(issue_attributes['status']).to eq translated_status
-    end
-
-    it 'updates the issue' do
-      issue.reload
-
-      expect(issue.attributes.values_at('title', 'description'))
-        .to eq attributes.values_at(:title, :description)
-    end
-
-    it 'returns a success response' do
-      expect(response).to have_http_status(:success)
-    end
-  end
-
-  describe 'PATCH/PUT /issues/:id with invalid attributes',
-           response_format: :json do
-    include_context 'when an issue exists'
-    include_context 'when issue author is logged in'
-    include_context 'when performing PATCH/PUT /issues/:id request'
-    include_context 'when attributes are invalid'
-
-    it 'returns a failure response' do
-      expect(response).to have_http_status(:unprocessable_entity)
-    end
-  end
-
-  describe 'DELETE /issues/:id' do
-    include_context 'when author is logged in'
-    include_context 'when an issue exists'
-
-    before { delete api_v1_issue_path(issue), headers: authorization_headers }
-
-    it 'returns an empty response' do
-      expect(response.body).to be_empty
-    end
-
-    it 'returns a no content response' do
-      expect(response).to have_http_status(:no_content)
     end
   end
 end

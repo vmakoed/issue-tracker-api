@@ -8,7 +8,7 @@ module Api
 
       # GET /issues
       def index
-        @issues = Issue.all
+        @issues = Issues::ListOp.submit!(current_user).issues
 
         render json: IssueSerializer.new(@issues)
       end

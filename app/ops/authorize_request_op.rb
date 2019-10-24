@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AuthorizeRequestOp < ::Subroutine::Op
+class AuthorizeRequestOp < ApplicationOp
   field :authorization_headers
 
   validates :authorization_headers, presence: true

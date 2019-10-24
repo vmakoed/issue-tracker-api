@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require 'subroutine/auth'
+
 module Issues
-  class CreateOp < ApplicationOp
+  class UpdateOp < ApplicationOp
     include ::Subroutine::Auth
 
     field :title
@@ -12,7 +14,7 @@ module Issues
 
     validates :title, presence: true
 
-    policy :create?
+    policy :update?
 
     outputs :issue
 

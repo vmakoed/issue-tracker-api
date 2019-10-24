@@ -36,6 +36,14 @@ class ApplicationPolicy
     false
   end
 
+  def manager?
+    user.role == Users::RoleEnum::MANAGER
+  end
+
+  def author?
+    user.role == Users::RoleEnum::AUTHOR
+  end
+
   class Scope
     attr_reader :user, :scope
 
@@ -46,6 +54,14 @@ class ApplicationPolicy
 
     def resolve
       scope.all
+    end
+
+    def manager?
+      user.role == Users::RoleEnum::MANAGER
+    end
+
+    def author?
+      user.role == Users::RoleEnum::AUTHOR
     end
   end
 end
