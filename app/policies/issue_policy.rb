@@ -26,10 +26,7 @@ class IssuePolicy < ApplicationPolicy
   end
 
   def update_manager?(manager_id)
-    assigning_self = -> { record.manager.nil? && user.id == manager_id }
-    unassigning_self = -> { record.manager == user && manager_id.nil? }
-
-    manager? && (assigning_self.call || unassigning_self.call)
+    manager? && (assigning_self?(manager_id) || unassigning_self?(manager_id))
   end
 
   def destroy?
@@ -44,5 +41,13 @@ class IssuePolicy < ApplicationPolicy
 
   def issue_manager?
     record.manager == user
+  end
+
+  def assigning_self?(manager_id)
+    record.manager.nil? && user.id == manager_id
+  end
+
+  def unassigning_self?(manager_id)
+    record.manager == user && manager_id.nil?
   end
 end
