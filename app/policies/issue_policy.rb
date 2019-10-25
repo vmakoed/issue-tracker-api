@@ -29,7 +29,7 @@ class IssuePolicy < ApplicationPolicy
     assigning_self = -> { record.manager.nil? && user.id == manager_id }
     unassigning_self = -> { record.manager == user && manager_id.nil? }
 
-    manager? && (assigning_self || unassigning_self)
+    manager? && (assigning_self.call || unassigning_self.call)
   end
 
   def destroy?

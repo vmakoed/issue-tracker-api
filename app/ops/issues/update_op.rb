@@ -4,10 +4,17 @@ require 'subroutine/auth'
 
 module Issues
   class UpdateOp < ExistingIssueOp
+    REQUIRED_ASSIGNEE_STATUSES = [
+      Issues::StatusEnum::IN_PROGRESS,
+      Issues::StatusEnum::RESOLVED
+    ].freeze
+
     string :title
     string :description
     string :status
     integer :manager_id
+
+    validate :required_assignee
 
     authorize -> { unauthorized! if authorization_policies.any?(&:call) }
 
@@ -22,14 +29,17 @@ module Issues
     end
 
     def update_issue
-      attributes = {
-        title: title,
-        description: description,
-        status: status,
-        manager_id: manager_id
-      }
+      resource.update!(params)
+    end
 
-      resource.update!(attributes.compact)
+    def required_assignee
+      return unless (status || resource.status).in? REQUIRED_ASSIGNEE_STATUSES
+      return if manager_id || resource.manager_id
+
+      errors.add(
+        :manager_id,
+        "Assignee is required for status #{Issues::StatusEnum.t(status)}"
+      )
     end
 
     def authorization_policies

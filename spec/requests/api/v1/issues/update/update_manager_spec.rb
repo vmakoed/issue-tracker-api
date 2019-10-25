@@ -133,7 +133,9 @@ RSpec.describe 'Issues', type: :request do
     end
   end
 
-  describe 'PATCH/PUT /issues/:id as issue manager with status attribute',
+  describe 'PATCH/PUT /issues/:id
+            as issue manager
+            with empty manager attribute',
            response_format: :json,
            response_status: :success do
     include_context 'when an issue exists'
