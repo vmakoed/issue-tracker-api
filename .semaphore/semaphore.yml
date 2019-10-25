@@ -31,7 +31,7 @@ blocks:
             - bundle exec rubocop
             - bundle exec brakeman
         - name: RSpec
-            commands:
-              - sem-service start postgres
-              - bundle exec rake db:setup
-              - bundle exec rspec
+          commands:
+            - sem-service start postgres
+            - bundle exec rake db:setup
+            - bundle exec rspec
