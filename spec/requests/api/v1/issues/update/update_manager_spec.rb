@@ -90,7 +90,6 @@ RSpec.describe 'Issues', type: :request do
     include_context 'when performing PATCH/PUT /issues/:id request'
     include_context 'when attributes contain authorized manager id'
 
-
     it 'does not update issue manager' do
       issue.reload
 
@@ -114,7 +113,6 @@ RSpec.describe 'Issues', type: :request do
     end
     include_context 'when performing PATCH/PUT /issues/:id request'
     include_context 'when attributes contain manager id'
-
 
     it 'does not update issue manager' do
       issue.reload

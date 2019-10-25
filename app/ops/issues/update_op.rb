@@ -49,10 +49,10 @@ module Issues
     end
 
     def update_manager_policy
-      empty_manager_id = ->() { params.key?('manager_id') && manager_id.nil? }
+      empty_manager_id = -> { params.key?('manager_id') && manager_id.nil? }
       manager_id_provided = manager_id.present? || empty_manager_id.call
 
-      manager_id_provided  && !policy.update_manager?(manager_id)
+      manager_id_provided && !policy.update_manager?(manager_id)
     end
   end
 end
