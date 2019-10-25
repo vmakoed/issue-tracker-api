@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Issues
-  class FetchOp < ExistingIssueOp
+  class FindOp < ExistingIssueOp
     policy :show?
 
     outputs :issue

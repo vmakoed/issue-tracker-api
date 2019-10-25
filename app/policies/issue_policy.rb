@@ -25,6 +25,13 @@ class IssuePolicy < ApplicationPolicy
     issue_manager?
   end
 
+  def update_manager?(manager_id)
+    assigning_self = -> { record.manager.nil? && user.id == manager_id }
+    unassigning_self = -> { record.manager == user && manager_id.nil? }
+
+    manager? && (assigning_self || unassigning_self)
+  end
+
   def destroy?
     issue_author?
   end

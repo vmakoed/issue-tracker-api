@@ -5,21 +5,18 @@ module Api
     class IssuesController < Api::V1::ApiController
       before_action :authenticate_user
 
-      # GET /issues
       def index
         operation = Issues::ListOp.submit!(current_user)
 
         render json: IssueSerializer.new(operation.issues)
       end
 
-      # GET /issues/1
       def show
-        operation = Issues::FetchOp.submit!(current_user, id: params[:id])
+        operation = Issues::FindOp.submit!(current_user, id: params[:id])
 
         render json: IssueSerializer.new(operation.issue)
       end
 
-      # POST /issues
       def create
         operation = Issues::CreateOp.submit!(
           current_user, issue_params.to_h
@@ -30,7 +27,6 @@ module Api
                location: api_v1_issue_path(operation.issue)
       end
 
-      # PATCH/PUT /issues/1
       def update
         operation = Issues::UpdateOp.submit!(
           current_user,
@@ -41,7 +37,6 @@ module Api
         render json: IssueSerializer.new(operation.issue)
       end
 
-      # DELETE /issues/1
       def destroy
         Issues::DestroyOp.submit!(current_user, id: params[:id])
 
@@ -51,7 +46,9 @@ module Api
       private
 
       def issue_params
-        params.require(:issue).permit(:title, :description, :status)
+        params
+          .require(:issue)
+          .permit(:title, :description, :status, :manager_id)
       end
     end
   end

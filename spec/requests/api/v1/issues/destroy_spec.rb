@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'support/issues/shared_contexts'
+require 'requests/api/v1/issues/shared/contexts'
 
 RSpec.describe 'Issues', type: :request, response_status: :no_content do
   describe 'DELETE /issues/:id as issue author' do
