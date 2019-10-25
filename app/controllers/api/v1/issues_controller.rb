@@ -3,10 +3,13 @@
 module Api
   module V1
     class IssuesController < Api::V1::ApiController
+      include Pagy::Backend
+
       before_action :authenticate_user
 
       def index
         operation = Issues::ListOp.submit!(current_user)
+        pagy_headers_merge(operation.pagination_metadata)
 
         render json: IssueSerializer.new(operation.issues)
       end

@@ -16,6 +16,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'enumerate_it', '~> 3.0'
 gem 'fast_jsonapi', '~> 1.5'
 gem 'jwt', '~> 2.2', '>= 2.2.1'
+gem 'pagy', '~> 3.6'
 gem 'pundit', '~> 2.1'
 gem 'subroutine', '~> 0.8.1'
 

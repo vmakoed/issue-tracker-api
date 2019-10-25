@@ -24,7 +24,9 @@ RSpec.describe 'Signups', type: :request do
     end
   end
 
-  describe 'POST /signup with valid attributes', response_format: :json do
+  describe 'POST /signup with valid attributes',
+           response_format: :json,
+           response_status: :created do
     include_context 'when performing POST /signup request'
     include_context 'when signup attributes are valid'
 
@@ -43,19 +45,13 @@ RSpec.describe 'Signups', type: :request do
     it 'assigns a correct password to a user' do
       expect(created_user.authenticate(attributes[:password])).to be_truthy
     end
-
-    it 'returns a success response' do
-      expect(response).to have_http_status(:created)
-    end
   end
 
-  describe 'POST /signup with invalid attributes', response_format: :json do
+  describe 'POST /signup with invalid attributes',
+           response_format: :json,
+           response_status: :unprocessable_entity do
     include_context 'when performing POST /signup request'
     include_context 'when signup attributes are invalid'
-
-    it 'returns a failure response' do
-      expect(response).to have_http_status(:unprocessable_entity)
-    end
 
     it 'returns error' do
       expect(JSON.parse(response.body)['error']).not_to be_empty
