@@ -4,61 +4,51 @@ module Api
   module V1
     class IssuesController < Api::V1::ApiController
       before_action :authenticate_user
-      before_action :set_issue, only: %i[show update destroy]
 
-      # GET /issues
       def index
-        @issues = Issue.all
+        operation = Issues::ListOp.submit!(current_user)
 
-        render json: IssueSerializer.new(@issues)
+        render json: IssueSerializer.new(operation.issues)
       end
 
-      # GET /issues/1
       def show
-        render json: issue_json
+        operation = Issues::FindOp.submit!(current_user, id: params[:id])
+
+        render json: IssueSerializer.new(operation.issue)
       end
 
-      # POST /issues
       def create
-        @issue = Issue.new(issue_params)
+        operation = Issues::CreateOp.submit!(
+          current_user, issue_params.to_h
+        )
 
-        if @issue.save
-          render json: issue_json,
-                 status: :created,
-                 location: api_v1_issue_path(@issue)
-        else
-          render json: @issue.errors, status: :unprocessable_entity
-        end
+        render json: IssueSerializer.new(operation.issue),
+               status: :created,
+               location: api_v1_issue_path(operation.issue)
       end
 
-      # PATCH/PUT /issues/1
       def update
-        if @issue.update(issue_params)
-          render json: issue_json
-        else
-          render json: @issue.errors, status: :unprocessable_entity
-        end
+        operation = Issues::UpdateOp.submit!(
+          current_user,
+          id: params[:id],
+          **issue_params.to_h.symbolize_keys
+        )
+
+        render json: IssueSerializer.new(operation.issue)
       end
 
-      # DELETE /issues/1
       def destroy
-        @issue.destroy
+        Issues::DestroyOp.submit!(current_user, id: params[:id])
 
         render json: {}, status: :no_content
       end
 
       private
 
-      def issue_json
-        IssueSerializer.new(@issue)
-      end
-
-      def set_issue
-        @issue = Issue.find(params[:id])
-      end
-
       def issue_params
-        params.require(:issue).permit(:title, :description, :status)
+        params
+          .require(:issue)
+          .permit(:title, :description, :status, :manager_id)
       end
     end
   end

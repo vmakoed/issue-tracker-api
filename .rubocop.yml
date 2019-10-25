@@ -8,7 +8,7 @@ Style/Documentation:
   Enabled: false
 
 Metrics/BlockLength:
-  ExcludedMethods: ['describe', 'context']
+  ExcludedMethods: ['describe']
 
 AllCops:
   TargetRubyVersion: 2.6
