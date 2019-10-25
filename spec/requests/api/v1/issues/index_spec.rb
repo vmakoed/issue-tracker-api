@@ -13,7 +13,7 @@ RSpec.describe 'Issues', type: :request do
     before { get api_v1_issues_path, headers: authorization_headers }
   end
 
-  describe "GET /issues as author return only author's issues",
+  describe 'GET /issues as author',
            response_format: :json,
            response_status: :success do
     include_context 'when issue author is logged in'
@@ -30,7 +30,7 @@ RSpec.describe 'Issues', type: :request do
     end
   end
 
-  describe 'GET /issues as manager returns all issues',
+  describe 'GET /issues as manager',
            response_format: :json,
            response_status: :success do
     include_context 'when manager is logged in'
