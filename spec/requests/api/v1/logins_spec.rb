@@ -21,16 +21,14 @@ RSpec.describe 'Logins', type: :request do
     let(:attributes) { user_params }
   end
 
-  describe 'POST /login with valid attributes', response_format: :json do
+  describe 'POST /login with valid attributes',
+           response_format: :json,
+           response_status: :success do
     include_context 'when performing POST /login request'
     include_context 'when login attributes are valid'
 
     it 'returns a token in response' do
       expect(JSON.parse(response.body)['token']).to eq token
-    end
-
-    it 'returns a success response' do
-      expect(response).to have_http_status(:ok)
     end
   end
 
@@ -38,13 +36,11 @@ RSpec.describe 'Logins', type: :request do
     let(:attributes) { { email: email, password: '123456' } }
   end
 
-  describe 'POST /login with invalid attributes', response_format: :json do
+  describe 'POST /login with invalid attributes',
+           response_format: :json,
+           response_status: :unprocessable_entity do
     include_context 'when performing POST /login request'
     include_context 'when login attributes are invalid'
-
-    it 'returns a failure response' do
-      expect(response).to have_http_status(:unprocessable_entity)
-    end
 
     it 'returns error in the response' do
       expect(JSON.parse(response.body)['error']).not_to be_empty

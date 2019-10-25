@@ -1,5 +1,5 @@
 version: v1.0
-name: First pipeline
+name: Lint and test
 agent:
   machine:
     type: e1-standard-2
@@ -17,33 +17,21 @@ blocks:
             - sem-version ruby 2.6.5
             - bundle install --deployment --path vendor/bundle
             - cache store
-  - name: Code scanning
+  - name: Code quailty and tests
     task:
       prologue:
         commands:
           - checkout
+          - cache restore
+          - sem-version ruby 2.6.5
+          - bundle install --deployment --path vendor/bundle
       jobs:
         - name: check style + security
           commands:
-            - cache restore
-            - sem-version ruby 2.6.5
-            - bundle install --deployment --path vendor/bundle
             - bundle exec rubocop
             - bundle exec brakeman
-  - name: Unit tests
-    task:
-      env_vars:
-        - name: ISSUE_TRACKER_API_DATABASE_USERNAME
-          value: postgres
-      prologue:
-        commands:
-          - checkout
-      jobs:
         - name: RSpec
-          commands:
-            - cache restore
-            - sem-service start postgres
-            - sem-version ruby 2.6.5
-            - bundle install --deployment --path vendor/bundle
-            - bundle exec rake db:setup
-            - bundle exec rspec
+            commands:
+              - sem-service start postgres
+              - bundle exec rake db:setup
+              - bundle exec rspec

@@ -25,8 +25,22 @@ RSpec.describe 'Issues', type: :request do
       IssueSerializer.new(user.created_issues).serialized_json
     end
 
+    let(:header) { response.header }
+    let(:pagination_metadata_keys) do
+      %w[Link Current-Page Page-Items Total-Pages Total-Count]
+    end
+    let(:items_per_page) { 25 }
+
     it 'returns only issues created by user in response' do
       expect(response.body).to eq issues_json
+    end
+
+    it 'returns pagination metadata' do
+      expect(pagination_metadata_keys - headers.keys).to be_empty
+    end
+
+    it 'returns correct number of items per page' do
+      expect(headers['Page-Items']).to eq items_per_page
     end
   end
 
