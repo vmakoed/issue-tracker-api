@@ -4,7 +4,6 @@ class AuthorizeRequestOp < ApplicationOp
   field :authorization_headers
 
   validates :authorization_headers, presence: true
-  validate :validate_authorization_header_present
 
   outputs :user
 
@@ -22,12 +21,6 @@ class AuthorizeRequestOp < ApplicationOp
     end
 
     output :user, user
-  end
-
-  def validate_authorization_header_present
-    return if authorization_headers.present?
-
-    errors.add(:authorization_headers, 'Missing authorization header')
   end
 
   def extract_authorization_token

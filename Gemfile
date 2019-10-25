@@ -18,6 +18,7 @@ gem 'fast_jsonapi', '~> 1.5'
 gem 'jwt', '~> 2.2', '>= 2.2.1'
 gem 'pagy', '~> 3.6'
 gem 'pundit', '~> 2.1'
+gem 'rswag', '~> 2.1', '>= 2.1.1'
 gem 'subroutine', '~> 0.8.1'
 
 group :development, :test do

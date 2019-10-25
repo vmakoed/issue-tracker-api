@@ -3,9 +3,9 @@
 class SignupOp < ApplicationOp
   string :email
   string :password
+  string :role, default: Users::RoleEnum::AUTHOR
 
-  validates :email, presence: true
-  validates :password, presence: true
+  validates :email, :password, :role, presence: true
 
   outputs :user
 
@@ -18,6 +18,6 @@ class SignupOp < ApplicationOp
   end
 
   def create_user
-    @user = User.create!(email: email, password: password)
+    @user = User.create!(params)
   end
 end

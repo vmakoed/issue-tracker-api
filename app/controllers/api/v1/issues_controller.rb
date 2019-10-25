@@ -10,7 +10,7 @@ module Api
       def index
         operation = Issues::ListOp.submit!(
           current_user,
-          status: params[:status]
+          request.parameters
         )
         pagy_headers_merge(operation.pagination_metadata)
 
@@ -25,7 +25,7 @@ module Api
 
       def create
         operation = Issues::CreateOp.submit!(
-          current_user, issue_params.to_h
+          current_user, request.parameters[:issue]
         )
 
         render json: IssueSerializer.new(operation.issue),
@@ -36,25 +36,17 @@ module Api
       def update
         operation = Issues::UpdateOp.submit!(
           current_user,
-          id: params[:id],
-          **issue_params.to_h.symbolize_keys
+          id: request.parameters[:id],
+          **request.parameters[:issue].symbolize_keys
         )
 
         render json: IssueSerializer.new(operation.issue)
       end
 
       def destroy
-        Issues::DestroyOp.submit!(current_user, id: params[:id])
+        Issues::DestroyOp.submit!(current_user, id: request.parameters[:id])
 
         render json: {}, status: :no_content
-      end
-
-      private
-
-      def issue_params
-        params
-          .require(:issue)
-          .permit(:title, :description, :status, :manager_id)
       end
     end
   end
