@@ -4,9 +4,10 @@ module Issues
   class CreateOp < ApplicationOp
     include ::Subroutine::Auth
 
-    field :title
-    field :description
-    field :status, default: Issues::StatusEnum::PENDING
+    DEFAULT_STATUS = Issues::StatusEnum::PENDING
+
+    string :title
+    string :description
 
     require_user!
 
@@ -25,10 +26,10 @@ module Issues
     end
 
     def create_issue
-      @issue = Issue.new(
+      @issue = Issue.create!(
         title: title,
         description: description,
-        status: status,
+        status: DEFAULT_STATUS,
         author: current_user
       )
     end

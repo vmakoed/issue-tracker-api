@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class SignupOp < ApplicationOp
-  field :email
-  field :password
+  string :email
+  string :password
 
   validates :email, presence: true
   validates :password, presence: true

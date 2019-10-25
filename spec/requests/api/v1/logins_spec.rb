@@ -3,7 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Logins', type: :request do
-  let(:user_params) { { email: 'example.com', password: 'password' } }
+  let(:email) { 'user@example.com' }
+  let(:valid_password) { 'password' }
+  let(:user_params) { { email: email, password: valid_password } }
   let(:token) { 'token' }
 
   before do
@@ -33,7 +35,7 @@ RSpec.describe 'Logins', type: :request do
   end
 
   shared_context 'when login attributes are invalid' do
-    let(:attributes) { { email: 'example.com', password: '123456' } }
+    let(:attributes) { { email: email, password: '123456' } }
   end
 
   describe 'POST /login with invalid attributes', response_format: :json do

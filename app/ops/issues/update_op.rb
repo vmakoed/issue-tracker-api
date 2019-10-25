@@ -3,40 +3,37 @@
 require 'subroutine/auth'
 
 module Issues
-  class UpdateOp < ApplicationOp
-    include ::Subroutine::Auth
+  class UpdateOp < ExistingIssueOp
+    string :title
+    string :description
+    string :status
 
-    field :title
-    field :description
-    field :status, default: Issues::StatusEnum::PENDING
+    authorize lambda {
+      if [title, description].any?(&:present?) && !policy.update?
+        return unauthorized!
+      end
 
-    require_user!
-
-    validates :title, presence: true
-
-    policy :update?
+      return unauthorized! if status.present? && !policy.update_status?
+    }
 
     outputs :issue
 
     protected
 
     def perform
-      create_issue
+      update_issue
 
-      output :issue, @issue
+      output :issue, resource
     end
 
-    def create_issue
-      @issue = Issue.new(
+    def update_issue
+      attributes = {
         title: title,
         description: description,
-        status: status,
-        author: current_user
-      )
-    end
+        status: status
+      }
 
-    def policy
-      IssuePolicy.new(current_user, nil)
+      resource.update!(attributes.compact)
     end
   end
 end

@@ -5,8 +5,6 @@ require 'subroutine/auth'
 module Api
   module V1
     class ApiController < ApplicationController
-      include Pundit
-
       attr_reader :current_user
 
       rescue_from ::Subroutine::Failure, with: :render_operation_failure
@@ -16,10 +14,11 @@ module Api
       private
 
       def authenticate_user
-        @current_user = AuthorizeRequestOp.submit!(
+        operation = AuthorizeRequestOp.submit!(
           authorization_headers: request.headers['Authorization']
-        ).user
+        )
 
+        @current_user = operation.user
         return if @current_user
 
         render json: { error: 'Not Authorized' }, status: :unauthorized

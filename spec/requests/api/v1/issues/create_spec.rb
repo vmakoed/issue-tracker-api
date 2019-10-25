@@ -20,8 +20,9 @@ RSpec.describe 'Issues', type: :request do
     end
   end
 
-  describe 'POST /issues with valid attributes without status attribute',
-           response_format: :json do
+  describe 'POST /issues as author with valid attributes',
+           response_format: :json,
+           response_status: :created do
     include_context 'when author is logged in'
     include_context 'when performing POST /issues request'
     include_context 'when create attributes are valid'
@@ -41,16 +42,12 @@ RSpec.describe 'Issues', type: :request do
         .to eq attributes.values_at(:title, :description)
     end
 
-    it 'returns a success response' do
-      expect(response).to have_http_status(:created)
-    end
-
     it 'creates an issue with a default pending status' do
       expect(issue_attributes['status']).to eq translated_status
     end
   end
 
-  shared_context 'when issue params contain status' do |status|
+  shared_context 'when attributes contain status' do |status|
     let(:attributes) do
       {
         title: 'New issue',
@@ -60,32 +57,29 @@ RSpec.describe 'Issues', type: :request do
     end
   end
 
-  describe 'POST /issues with valid attributes with status attribute',
+  describe 'POST /issues as author with valid attributes with status attribute',
            response_format: :json do
     include_context 'when author is logged in'
     include_context 'when performing POST /issues request'
     include_context 'when create attributes are valid'
-
-    let(:status) { Issues::StatusEnum::IN_PROGRESS }
-    let(:translated_status) { Issues::StatusEnum.t(status) }
-    let(:issue_attributes) { JSON.parse(response.body)['data']['attributes'] }
-
-    include_context 'when issue params contain status',
+    include_context 'when attributes contain status',
                     Issues::StatusEnum::IN_PROGRESS
 
-    it 'creates an issue with a correct status' do
+    let(:default_status) { Issues::StatusEnum::PENDING }
+    let(:translated_status) { Issues::StatusEnum.t(default_status) }
+    let(:issue_attributes) { JSON.parse(response.body)['data']['attributes'] }
+
+    it 'ignores status attribute and sets default status' do
       expect(issue_attributes['status']).to eq translated_status
     end
   end
 
-  describe 'POST /issues with invalid attributes', response_format: :json do
+  describe 'POST /issues as author with invalid attributes',
+           response_format: :json,
+           response_status: :unprocessable_entity do
     include_context 'when author is logged in'
     include_context 'when performing POST /issues request'
     include_context 'when attributes are invalid'
-
-    it 'returns a failure response' do
-      expect(response).to have_http_status(:unprocessable_entity)
-    end
   end
 
   shared_context 'when performing PATCH/PUT /issues/:id request' do
@@ -95,16 +89,12 @@ RSpec.describe 'Issues', type: :request do
     end
   end
 
-  describe 'POST /issues
-            by manager
-            with valid attributes' do
+  describe 'POST /issues as manager with valid attributes',
+           response_format: :json,
+           response_status: :unauthorized do
     include_context 'when manager is logged in'
     include_context 'when performing POST /issues request'
     include_context 'when create attributes are valid'
-
-    it 'returns a failure response' do
-      expect(response).to have_http_status(:unauthorized)
-    end
 
     it 'returns error in the response' do
       expect(JSON.parse(response.body)['error']).not_to be_empty
