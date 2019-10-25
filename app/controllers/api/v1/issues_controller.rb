@@ -8,7 +8,10 @@ module Api
       before_action :authenticate_user
 
       def index
-        operation = Issues::ListOp.submit!(current_user)
+        operation = Issues::ListOp.submit!(
+          current_user,
+          status: params[:status]
+        )
         pagy_headers_merge(operation.pagination_metadata)
 
         render json: IssueSerializer.new(operation.issues)

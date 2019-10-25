@@ -40,7 +40,7 @@ RSpec.describe 'Issues', type: :request do
     end
   end
 
-  shared_context 'when attributes contain manager id' do
+  shared_context 'when attributes contain only manager id' do
     let(:manager) { create(:manager) }
     let(:attributes) do
       {
@@ -50,7 +50,7 @@ RSpec.describe 'Issues', type: :request do
   end
 
   shared_context 'when attributes contain authorized manager id' do
-    include_context 'when attributes contain manager id' do
+    include_context 'when attributes contain only manager id' do
       let(:manager) { authorized_manager }
     end
   end
