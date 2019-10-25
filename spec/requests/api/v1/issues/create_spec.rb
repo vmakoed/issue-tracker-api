@@ -82,13 +82,6 @@ RSpec.describe 'Issues', type: :request do
     include_context 'when attributes are invalid'
   end
 
-  shared_context 'when performing PATCH/PUT /issues/:id request' do
-    before do
-      put api_v1_issue_path(issue), params: { issue: attributes },
-                                    headers: authorization_headers
-    end
-  end
-
   describe 'POST /issues as manager with valid attributes',
            response_format: :json,
            response_status: :unauthorized do
@@ -98,17 +91,6 @@ RSpec.describe 'Issues', type: :request do
 
     it 'returns error in the response' do
       expect(JSON.parse(response.body)['error']).not_to be_empty
-    end
-  end
-
-  shared_context 'when update attributes are valid' do
-    let(:status) { Issues::StatusEnum::IN_PROGRESS }
-    let(:attributes) do
-      {
-        title: 'Updated issue',
-        description: 'Updated description',
-        status: status
-      }
     end
   end
 end
