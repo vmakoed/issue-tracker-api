@@ -9,4 +9,6 @@ class Issue < ApplicationRecord
   validates :title, presence: true
 
   has_enumeration_for :status, with: Issues::StatusEnum
+
+  scope :with_status, ->(status) { where(status: status) }
 end

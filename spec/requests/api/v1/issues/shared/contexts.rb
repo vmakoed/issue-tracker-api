@@ -3,7 +3,8 @@
 require 'support/logged_in_context'
 
 shared_context 'when an issue exists' do
-  let!(:issue) { create(:issue) }
+  let(:status) { Issues::StatusEnum::PENDING }
+  let!(:issue) { create(:issue, status: status) }
 end
 
 shared_context 'when issue author is logged in' do

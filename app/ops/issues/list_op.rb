@@ -5,6 +5,10 @@ module Issues
     include Pagy::Backend
     include ::Subroutine::Auth
 
+    string :status
+
+    validate :supported_status
+
     require_user!
 
     outputs :issues, :pagination_metadata
@@ -20,7 +24,16 @@ module Issues
     end
 
     def fetch_issues
-      @issues = policy_scope Issue
+      base_scope = policy_scope Issue
+      return @issues = base_scope unless status.present?
+
+      @issues = base_scope.with_status(status)
+    end
+
+    def supported_status
+      return if status.nil? || status.in?(Issues::StatusEnum.list)
+
+      errors.add(:status, 'Incorrect status')
     end
 
     def paginate_issues
