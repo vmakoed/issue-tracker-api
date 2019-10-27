@@ -30,7 +30,9 @@ Here is the recommended flow for interaction with the page:
 and receive an authorization token. Copy the value under the *token* key.
 3. At the top right corner of the page, click **Authorize** button and paste the 
 token you have received on the previous step. This allows you to interact with 
-the Issues API.
+the Issues API. If you are using another client to interact with the app (e.g.
+Postman), use the *Bearer token* type of request authorization or manually add
+the token to headers by the *Authorization* key.
 4. Navigate to the **Issues** section. Pay attention to the endpoint description
 to get the idea of the parameters you are allowed and are not allowed to use as
 an author/manager as well as the valid values for the parameters.
