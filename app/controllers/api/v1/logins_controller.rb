@@ -4,7 +4,7 @@ module Api
   module V1
     class LoginsController < Api::V1::ApiController
       def create
-        operation = Authentication::IssueJsonWebTokenOp.submit!(
+        operation = Authentication::Jwt::GenerateOp.submit!(
           request.parameters[:user]
         )
 

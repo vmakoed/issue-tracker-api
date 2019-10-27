@@ -8,21 +8,27 @@ describe 'Signup API' do
       produces 'application/json'
       parameter name: :user, in: :body, schema: {
         type: :object,
+        required: %w[user],
         properties: {
           user: {
             type: :object,
+            required: %w[email password role],
             properties: {
               email: { type: :string },
               password: { type: :string },
-              role: { type: :string },
-              required: %w[email password role]
+              role: { type: :string }
             }
           }
-        },
-        required: %w[user]
+        }
       }
 
       response '201', 'User created' do
+        schema type: :object,
+               required: %w[data],
+               properties: {
+                 data: { '$ref' => '#/definitions/user' }
+               }
+
         let(:user) do
           {
             user: {

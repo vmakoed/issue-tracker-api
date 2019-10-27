@@ -18,9 +18,24 @@ RSpec.configure do |config|
         }
       },
       definitions: {
-        issue_object: {
+        user: {
           type: :object,
           required: %w[id attributes],
+          properties: {
+            id: { type: :string },
+            attributes: {
+              type: :object,
+              required: %w[email role],
+              properties: {
+                email: { type: :string },
+                role: { type: :string, enum: Users::RoleEnum.list }
+              }
+            }
+          }
+        },
+        issue: {
+          type: :object,
+          required: %w[id attributes relationships],
           properties: {
             id: { type: :string },
             attributes: {
@@ -29,7 +44,39 @@ RSpec.configure do |config|
               properties: {
                 title: { type: :string },
                 description: { type: :string },
-                status: { type: :string }
+                status: { type: :string, enum: Issues::StatusEnum.list }
+              }
+            },
+            relationships: {
+              type: :object,
+              required: %w[author manager],
+              properties: {
+                author: {
+                  type: :object,
+                  required: %w[data],
+                  properties: {
+                    data: {
+                      type: :object,
+                      required: %w[id],
+                      properties: {
+                        id: { type: :string }
+                      }
+                    }
+                  }
+                },
+                manager: {
+                  type: :object,
+                  properties: {
+                    data: {
+                      type: :object,
+                      'x-nullable': true,
+                      required: %w[id],
+                      properties: {
+                        id: { type: :string }
+                      }
+                    }
+                  }
+                }
               }
             }
           }

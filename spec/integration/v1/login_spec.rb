@@ -22,6 +22,12 @@ describe 'Login API' do
       }
 
       response '200', 'Logged in successfully' do
+        schema type: :object,
+               required: %w[token],
+               properties: {
+                 token: { type: :string }
+               }
+
         let(:user) do
           {
             user: {
