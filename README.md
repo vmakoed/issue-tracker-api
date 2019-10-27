@@ -1,24 +1,56 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+### Requirements
+ * Ruby 2.6.5
+ * PostgreSQL
+ 
+The app was developed using PostgreSQL 11.4 but older versions should 
+work fine as well.
 
-Things you may want to cover:
+### Setup
+The `.env.sample` file contains default database credentials. If they do not 
+match your environment, run the following command:
 
-* Ruby version
+`$ cp .env.sample .env`
 
-* System dependencies
+and configure  settings in `.env` file.
 
-* Configuration
+Run `$ bin/setup` to install all dependencies.
 
-* Database creation
+### Getting started
 
-* Database initialization
+Start the server (the easiest way is to run `$ bin/server`).
+Navigate to `/api-docs/index.html` for the documentation reference.
+The documentation uses [Swagger](https://swagger.io/) engine and allows to send
+request to the app right from the documentation page. 
+Here is the recommended flow for interaction with the page:
+1. Start with **Signup** section to create an author and a manager.
+2. Navigate to **Login** section to authenticate the user you have just created
+and receive an authorization token. Copy the value under the *token* key.
+3. At the top right corner of the page, click **Authorize** button and paste the 
+token you have received on the previous step. This allows you to interact with 
+the Issues API.
+4. Navigate to the **Issues** section. Pay attention to the endpoint description
+to get the idea of the parameters you are allowed and are not allowed to use as
+an author/manager as well as the valid values for the parameters.
 
-* How to run the test suite
+### Tests
 
-* Services (job queues, cache servers, search engines, etc.)
+Request specs are implemented with [rspec](https://github.com/rspec/rspec) and 
+[rswag](https://github.com/rswag/rswag). Rspec examples cover all available 
+endpoints and scenarios. Rswag examples only have minimal coverage and are
+implemented for the sole purpose of generating an interactive documentation
+reference.
 
-* Deployment instructions
+### Code style
 
-* ...
+The app uses [rubocop](https://github.com/rubocop-hq/rubocop) and 
+[rubocop-rspec](https://github.com/rubocop-hq/rubocop-rspec) to enforce ruby
+code style guidelines.
+
+### Continuous integration
+
+The app uses [SemaphoreCI 2.0](https://semaphoreci.com/) for validating code
+style, running security checks (with [brakeman](https://brakemanscanner.org/))
+and enforcing tests integrity. The pipeline is configured in
+`.semaphore/semaphore.yml`.

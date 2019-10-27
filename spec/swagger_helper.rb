@@ -7,6 +7,7 @@ RSpec.configure do |config|
       swagger: '2.0',
       info: {
         title: 'API V1',
+        description: 'An issue-tracking API.',
         version: 'v1'
       },
       basePath: '/api/v1',
