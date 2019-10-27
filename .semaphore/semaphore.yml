@@ -19,15 +19,13 @@ blocks:
             - cache store
   - name: Code quailty and tests
     task:
-      env_vars:
-        - name: ISSUE_TRACKER_API_DATABASE_USERNAME
-          value: postgres
       prologue:
         commands:
           - checkout
           - cache restore
           - sem-version ruby 2.6.5
           - bundle install --deployment --path vendor/bundle
+          - cp .env.sample .env
       jobs:
         - name: check style + security
           commands:
