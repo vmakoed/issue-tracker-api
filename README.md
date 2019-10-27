@@ -1,4 +1,4 @@
-# README
+# Issue Tracker API
 
 ### Requirements
  * Ruby 2.6.5
@@ -24,7 +24,7 @@ Start the server (the easiest way is to run `$ bin/server`).
 Navigate to `/api-docs/index.html` for the documentation reference.
 The documentation uses [Swagger](https://swagger.io/) engine and allows to send
 request to the app right from the documentation page. 
-Here is the recommended flow for interaction with the page:
+Here is the recommended flow for interaction with the app:
 1. Start with **Signup** section to create an author or a manager.
 2. Navigate to **Login** section to authenticate the user you have just created
 and receive an authorization token. Copy the value under the *token* key.
@@ -40,10 +40,10 @@ an author/manager as well as the valid values for the parameters.
 ### Tests
 
 Request specs are implemented with [rspec](https://github.com/rspec/rspec) and 
-[rswag](https://github.com/rswag/rswag). Rspec examples cover all available 
-endpoints and scenarios. Rswag examples only have minimal coverage and are
-implemented for the sole purpose of generating an interactive documentation
-reference.
+[rswag](https://github.com/rswag/rswag). Rspec examples aim to cover all 
+available  endpoints and scenarios. Rswag examples only have minimal coverage
+and are implemented for the sole purpose of generating an interactive
+documentation reference.
 
 ### Code style
 
