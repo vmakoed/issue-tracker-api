@@ -13,11 +13,13 @@ gem 'puma', '~> 3.11'
 gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'bcrypt', '~> 3.1.7'
+gem 'dotenv-rails', '~> 2.7', '>= 2.7.5'
 gem 'enumerate_it', '~> 3.0'
 gem 'fast_jsonapi', '~> 1.5'
 gem 'jwt', '~> 2.2', '>= 2.2.1'
 gem 'pagy', '~> 3.6'
 gem 'pundit', '~> 2.1'
+gem 'rswag', '~> 2.1', '>= 2.1.1'
 gem 'subroutine', '~> 0.8.1'
 
 group :development, :test do

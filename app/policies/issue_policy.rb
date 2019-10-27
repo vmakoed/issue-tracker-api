@@ -44,7 +44,7 @@ class IssuePolicy < ApplicationPolicy
   end
 
   def assigning_self?(manager_id)
-    record.manager.nil? && user.id == manager_id
+    record.manager.blank? && user.id == manager_id
   end
 
   def unassigning_self?(manager_id)

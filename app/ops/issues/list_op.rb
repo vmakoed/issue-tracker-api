@@ -5,6 +5,7 @@ module Issues
     include Pagy::Backend
     include ::Subroutine::Auth
 
+    integer :page
     string :status
 
     validate :supported_status
@@ -31,13 +32,13 @@ module Issues
     end
 
     def supported_status
-      return if status.nil? || status.in?(Issues::StatusEnum.list)
+      return if status.blank? || status.in?(Issues::StatusEnum.list)
 
       errors.add(:status, 'Incorrect status')
     end
 
     def paginate_issues
-      @pagination_metadata, @paginated_issues = pagy @issues
+      @pagination_metadata, @paginated_issues = pagy(@issues, page: page)
     end
   end
 end

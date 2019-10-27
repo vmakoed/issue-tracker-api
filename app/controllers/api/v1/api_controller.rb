@@ -14,7 +14,7 @@ module Api
       private
 
       def authenticate_user
-        operation = AuthorizeRequestOp.submit!(
+        operation = Authentication::AuthenticateRequestOp.submit!(
           authorization_headers: request.headers['Authorization']
         )
 

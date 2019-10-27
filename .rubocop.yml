@@ -16,3 +16,5 @@ AllCops:
     - 'db/schema.rb'
     - 'config/**/*'
     - 'bin/{bundle,setup,rails,rake,spring}'
+    - 'spec/integration/**/*'
+    - 'spec/swagger_helper.rb'
