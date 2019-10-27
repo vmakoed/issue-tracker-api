@@ -2,7 +2,7 @@ require 'swagger_helper'
 
 describe 'Signup API' do
   path '/signup' do
-    post 'Registers a user' do
+    post 'Register a user' do
       tags 'Signup'
       consumes 'application/json'
       produces 'application/json'
@@ -16,7 +16,7 @@ describe 'Signup API' do
             properties: {
               email: { type: :string },
               password: { type: :string },
-              role: { type: :string }
+              role: { type: :string, enum: Users::RoleEnum.list }
             }
           }
         }

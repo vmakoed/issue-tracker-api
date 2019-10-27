@@ -131,11 +131,11 @@
   "paths": {
     "/issues": {
       "get": {
-        "summary": "Returns list of issues",
+        "summary": "Fetch list of issues",
         "tags": [
           "Issues"
         ],
-        "description": "\n        When logged in as an author, returns author's issues.\n        When logged in as a manager, returns all issues.\n      ",
+        "description": "When logged in as an author, returns author's issues.\n                  When logged in as a manager, returns all issues.",
         "consumes": [
           "application/json"
         ],
@@ -151,7 +151,7 @@
         "parameters": [
           {
             "name": "page",
-            "description": "\n                  Used for pagination. Number of items per page: 25'\n                ",
+            "description": "Used for pagination. Number of items per page: 25",
             "in": "query",
             "type": "integer",
             "allowEmptyValue": true,
@@ -190,11 +190,11 @@
         }
       },
       "post": {
-        "summary": "Creates an issue",
+        "summary": "Create an issue",
         "tags": [
           "Issues"
         ],
-        "description": "\n        You must be logged in as author to create an issue.\n        The issue is crated with 'pending' status.\n        You cannot set status or manager_id to an issue (these parameters will be ignored).\n      ",
+        "description": "You must be logged in as author to create an issue.\n                   The issue is created with 'pending' status.\n                   You cannot set status or manager_id to an issue (these parameters will be ignored).",
         "consumes": [
           "application/json"
         ],
@@ -256,11 +256,11 @@
     },
     "/issues/{id}": {
       "get": {
-        "summary": "Returns the issue",
+        "summary": "Fetch an issue",
         "tags": [
           "Issues"
         ],
-        "description": "\n        When logged in as an author, you can only fetch your issues.\n        When logged in as a manager, you can fetch any issue.\n      ",
+        "description": "When logged in as an author, you can only fetch your issues.\n                   When logged in as a manager, you can fetch any issue.",
         "consumes": [
           "application/json"
         ],
@@ -299,11 +299,11 @@
         }
       },
       "put": {
-        "summary": "Updates an issue",
+        "summary": "Update an issue",
         "tags": [
           "Issues"
         ],
-        "description": "\n        When logged in as an author, you can only update title and description.\n        When logged in as a manager, you can only update status and manager_id.\n        You can only set a manager_id to your id or to an empty value.\n        You cannot update status to 'in_progress' or 'resolved' unless you have assigned an issue to yourself.\n        You cannot update manager_id to an empty value if its status is either 'in progress' of 'resolved'.\n      ",
+        "description": "When logged in as an author, you can only update title and description.\n                  When logged in as a manager, you can only update status and manager_id.\n                  You can only set a manager_id to your id (assign issue to self) or to an empty value (unassign).\n                  You cannot update status to 'in_progress' or 'resolved' unless you have assigned an issue to yourself.\n                  You cannot update manager_id to an empty value if its status is either 'in progress' of 'resolved'.",
         "consumes": [
           "application/json"
         ],
@@ -381,11 +381,11 @@
         }
       },
       "delete": {
-        "summary": "Deletes an issue",
+        "summary": "Delete an issue",
         "tags": [
           "Issues"
         ],
-        "description": "\n        You can only delete an issue if you are logged in as its author.\n      ",
+        "description": "You can only delete an issue if you are logged in as its author.",
         "consumes": [
           "application/json"
         ],
@@ -415,7 +415,7 @@
     },
     "/login": {
       "post": {
-        "summary": "Provides an authorization token",
+        "summary": "Fetch an authorization token",
         "tags": [
           "Login"
         ],
@@ -474,7 +474,7 @@
     },
     "/signup": {
       "post": {
-        "summary": "Registers a user",
+        "summary": "Register a user",
         "tags": [
           "Signup"
         ],
@@ -509,7 +509,11 @@
                       "type": "string"
                     },
                     "role": {
-                      "type": "string"
+                      "type": "string",
+                      "enum": [
+                        "author",
+                        "manager"
+                      ]
                     }
                   }
                 }

@@ -14,19 +14,16 @@ describe 'Issues API' do
   end
 
   path '/issues' do
-    get 'Returns list of issues' do
+    get 'Fetch list of issues' do
       tags 'Issues'
-      description %(
-        When logged in as an author, returns author's issues.
-        When logged in as a manager, returns all issues.
-      )
+      description "When logged in as an author, returns author's issues.
+                  When logged in as a manager, returns all issues."
       consumes 'application/json'
       produces 'application/json'
       security [Bearer: {}]
       parameter name: :page,
-                description: %(
-                  Used for pagination. Number of items per page: 25'
-                ),
+                description: 'Used for pagination. '\
+                             'Number of items per page: 25',
                 in: :query,
                 type: :integer,
                 allowEmptyValue: true,
@@ -64,13 +61,12 @@ describe 'Issues API' do
       end
     end
 
-    post 'Creates an issue' do
+    post 'Create an issue' do
       tags 'Issues'
-      description %(
-        You must be logged in as author to create an issue.
-        The issue is crated with 'pending' status.
-        You cannot set status or manager_id to an issue (these parameters will be ignored).
-      )
+      description "You must be logged in as author to create an issue.
+                   The issue is created with 'pending' status.
+                   You cannot set status or manager_id to an issue (these "\
+                  "parameters will be ignored)."
       consumes 'application/json'
       produces 'application/json'
       security [Bearer: {}]
@@ -112,12 +108,10 @@ describe 'Issues API' do
   end
 
   path '/issues/{id}' do
-    get 'Returns the issue' do
+    get 'Fetch an issue' do
       tags 'Issues'
-      description %(
-        When logged in as an author, you can only fetch your issues.
-        When logged in as a manager, you can fetch any issue.
-      )
+      description "When logged in as an author, you can only fetch your issues.
+                   When logged in as a manager, you can fetch any issue."
       consumes 'application/json'
       produces 'application/json'
       security [Bearer: {}]
@@ -141,15 +135,18 @@ describe 'Issues API' do
       end
     end
 
-    put 'Updates an issue' do
+    put 'Update an issue' do
       tags 'Issues'
-      description %(
-        When logged in as an author, you can only update title and description.
-        When logged in as a manager, you can only update status and manager_id.
-        You can only set a manager_id to your id or to an empty value.
-        You cannot update status to 'in_progress' or 'resolved' unless you have assigned an issue to yourself.
-        You cannot update manager_id to an empty value if its status is either 'in progress' of 'resolved'.
-      )
+      description "When logged in as an author, you can only update title "\
+                  "and description.
+                  When logged in as a manager, you can only update status and "\
+                  "manager_id.
+                  You can only set a manager_id to your id (assign issue to "\
+                  "self) or to an empty value (unassign).
+                  You cannot update status to 'in_progress' or 'resolved' "\
+                  "unless you have assigned an issue to yourself.
+                  You cannot update manager_id to an empty value if its "\
+                  "status is either 'in progress' of 'resolved'."
       consumes 'application/json'
       produces 'application/json'
       security [Bearer: {}]
@@ -197,11 +194,10 @@ describe 'Issues API' do
       end
     end
 
-    delete 'Deletes an issue' do
+    delete 'Delete an issue' do
       tags 'Issues'
-      description %(
-        You can only delete an issue if you are logged in as its author.
-      )
+      description "You can only delete an issue if you are logged in as its "\
+                  "author."
       consumes 'application/json'
       produces 'application/json'
       security [Bearer: {}]
