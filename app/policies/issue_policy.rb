@@ -10,7 +10,7 @@ class IssuePolicy < ApplicationPolicy
   end
 
   def show?
-    issue_author?
+    issue_author? || manager?
   end
 
   def create?
@@ -44,10 +44,12 @@ class IssuePolicy < ApplicationPolicy
   end
 
   def assigning_self?(manager_id)
+    return true if record.manager_id == manager_id
+
     record.manager.blank? && user.id == manager_id
   end
 
   def unassigning_self?(manager_id)
-    record.manager == user && manager_id.nil?
+    record.manager == user && manager_id.blank?
   end
 end

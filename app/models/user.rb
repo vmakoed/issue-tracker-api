@@ -12,7 +12,7 @@ class User < ApplicationRecord
                             inverse_of: :manager
 
   has_secure_password
-  has_enumeration_for :role, with: Users::RoleEnum
+  has_enumeration_for :role, with: Users::RoleEnum, required: true
 
   validates :email, uniqueness: true,
                     format: { with: URI::MailTo::EMAIL_REGEXP }

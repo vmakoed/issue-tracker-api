@@ -2,7 +2,7 @@ require 'swagger_helper'
 
 describe 'Login API' do
   path '/login' do
-    post 'Provides an authorization token' do
+    post 'Fetch an authorization token' do
       tags 'Login'
       consumes 'application/json'
       produces 'application/json'

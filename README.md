@@ -10,8 +10,9 @@ work fine as well.
 ### Setup
 The `.env.sample` file contains default database credentials. If they do not 
 match your environment, run the following command:
-
-`$ cp .env.sample .env`
+```
+$ cp .env.sample .env
+```
 
 and configure  settings in `.env` file.
 
@@ -24,7 +25,7 @@ Navigate to `/api-docs/index.html` for the documentation reference.
 The documentation uses [Swagger](https://swagger.io/) engine and allows to send
 request to the app right from the documentation page. 
 Here is the recommended flow for interaction with the page:
-1. Start with **Signup** section to create an author and a manager.
+1. Start with **Signup** section to create an author or a manager.
 2. Navigate to **Login** section to authenticate the user you have just created
 and receive an authorization token. Copy the value under the *token* key.
 3. At the top right corner of the page, click **Authorize** button and paste the 

@@ -4,10 +4,10 @@ require 'subroutine/auth'
 
 module Issues
   class UpdateOp < ExistingIssueOp
-    REQUIRED_ASSIGNEE_STATUSES = [
-      Issues::StatusEnum::IN_PROGRESS,
-      Issues::StatusEnum::RESOLVED
-    ].freeze
+    REQUIRED_ASSIGNEE_STATUSES = Issues::StatusEnum.values_for(%w[
+                                                                 IN_PROGRESS
+                                                                 RESOLVED
+                                                               ]).freeze
 
     string :title
     string :description
@@ -15,8 +15,9 @@ module Issues
     integer :manager_id
 
     validate :required_assignee
+    validate :manager_with_id_existence
 
-    authorize -> { unauthorized! if authorization_policies.any?(&:call) }
+    authorize -> { unauthorized! unless authorization_policies.all?(&:call) }
 
     outputs :issue
 
@@ -33,12 +34,25 @@ module Issues
     end
 
     def required_assignee
-      return unless (status || resource.status).in? REQUIRED_ASSIGNEE_STATUSES
-      return if manager_id || resource.manager_id
+      target_status = status || resource.status
+
+      return unless target_status.in? REQUIRED_ASSIGNEE_STATUSES
+      return if !manager_id_provided? && resource.manager
+      return if manager_id
 
       errors.add(
         :manager_id,
-        "Assignee is required for status #{Issues::StatusEnum.t(status)}"
+        "is required for status #{Issues::StatusEnum.t(target_status)}"
+      )
+    end
+
+    def manager_with_id_existence
+      return if manager_id.blank?
+      return if User.where(role: Users::RoleEnum::MANAGER).exists?(manager_id)
+
+      errors.add(
+        :manager_id,
+        'does not exist'
       )
     end
 
@@ -51,18 +65,21 @@ module Issues
     end
 
     def basic_attributes_policy
-      [title, description].any?(&:present?) && !policy.update?
+      [title, description].all?(&:blank?) || policy.update?
     end
 
     def update_status_policy
-      status.present? && !policy.update_status?
+      return true if manager_id_provided?
+
+      status.blank? || policy.update_status?
     end
 
     def update_manager_policy
-      empty_manager_id = -> { params.key?('manager_id') && manager_id.nil? }
-      manager_id_provided = manager_id.present? || empty_manager_id.call
+      !manager_id_provided? || policy.update_manager?(manager_id)
+    end
 
-      manager_id_provided && !policy.update_manager?(manager_id)
+    def manager_id_provided?
+      params.key?('manager_id')
     end
   end
 end
