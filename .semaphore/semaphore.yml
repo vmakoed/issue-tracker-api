@@ -40,4 +40,4 @@ promotions:
   - name: EB deploy
     pipeline_file: eb-deployment.yml
     auto_promote:
-      when: "result = 'passed' and branch = 'deployment'"
+      when: "result = 'passed' and branch = 'master'"
