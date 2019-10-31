@@ -21,7 +21,7 @@ module Authentication
       def encode_token
         payload = { user_id: user_id, exp: expiration.to_i }
         @token = ::JWT.encode(
-          payload, Rails.application.secrets.secret_key_base
+          payload, ENV['JWT_SECRET_KEY_BASE']
         )
       end
     end
