@@ -19,7 +19,7 @@ module Authentication
 
       def decode_token
         body = ::JWT.decode(
-          token, ENV['JWT_SECRET_KEY_BASE']
+          token, ENV['SECRET_KEY_BASE']
         )[0]
         @user_hash = HashWithIndifferentAccess.new(body)
       end
