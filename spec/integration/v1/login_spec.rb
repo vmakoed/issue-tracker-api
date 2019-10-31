@@ -1,6 +1,8 @@
 require 'swagger_helper'
 
 describe 'Login API' do
+  ENV['SECRET_KEY_BASE'] = 'secret'
+
   path '/login' do
     post 'Fetch an authorization token' do
       tags 'Login'
