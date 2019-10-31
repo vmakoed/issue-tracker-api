@@ -19,7 +19,7 @@ module Authentication
 
       def decode_token
         body = ::JWT.decode(
-          token, Rails.application.secrets.secret_key_base
+          token, ENV['SECRET_KEY_BASE']
         )[0]
         @user_hash = HashWithIndifferentAccess.new(body)
       end
