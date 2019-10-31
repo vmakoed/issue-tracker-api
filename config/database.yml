@@ -16,5 +16,5 @@ test:
 
 production:
   <<: *default
-  database: issue_tracker_api_production
+  database: <%= ENV['ISSUE_TRACKER_API_DATABASE_PRODUCTION'] %>
   password: <%= ENV['ISSUE_TRACKER_API_DATABASE_PASSWORD'] %>
