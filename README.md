@@ -57,3 +57,10 @@ The app uses [SemaphoreCI 2.0](https://semaphoreci.com/) for validating code
 style, running security checks (with [brakeman](https://brakemanscanner.org/))
 and enforcing tests integrity. The pipeline is configured in
 `.semaphore/semaphore.yml`.
+
+### Continuous deployment
+
+SemaphoreCI is configured to deploy on each successful build on `master` branch. 
+The application is deployed to 
+[AWS Beanstalk Environment](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/Welcome.html).
+You can find an url for the deployed application next to the repo description.
