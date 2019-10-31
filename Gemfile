@@ -19,13 +19,15 @@ gem 'fast_jsonapi', '~> 1.5'
 gem 'jwt', '~> 2.2', '>= 2.2.1'
 gem 'pagy', '~> 3.6'
 gem 'pundit', '~> 2.1'
-gem 'rswag', '~> 2.1', '>= 2.1.1'
+gem 'rswag-api', '~> 2.1', '>= 2.1.1'
+gem 'rswag-ui', '~> 2.1', '>= 2.1.1'
 gem 'subroutine', '~> 0.8.1'
 
 group :development, :test do
   gem 'factory_bot_rails', '~> 5.1', '>= 5.1.1'
   gem 'pry', '~> 0.12.2'
   gem 'rspec-rails', '~> 3.9'
+  gem 'rswag-specs', '~> 2.1', '>= 2.1.1'
   gem 'rubocop', '~> 0.75.1', require: false
   gem 'rubocop-rspec', '~> 1.36', require: false
 end
